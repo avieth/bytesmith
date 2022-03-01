@@ -22,7 +22,7 @@ module Data.Bytes.Parser.Rebindable
   ) where
 
 import Prelude () 
-import GHC.Exts (TYPE,RuntimeRep(..))
+import GHC.Exts (TYPE,RuntimeRep(..),LiftedRep)
 import Data.Bytes.Parser.Internal (Parser(..))
 
 class Bind (ra :: RuntimeRep) (rb :: RuntimeRep) where
@@ -187,25 +187,25 @@ sequenceInt2to5Parser (Parser f) (Parser g) = Parser
       (# | (# _, b, c #) #) -> g (# arr, b, c #) s1
   )
 
-instance Bind 'LiftedRep 'LiftedRep where
+instance Bind LiftedRep LiftedRep where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
   (>>=) = bindParser
   (>>) = sequenceParser
 
-instance Bind 'WordRep 'LiftedRep where
+instance Bind 'WordRep LiftedRep where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
   (>>=) = bindWordParser
   (>>) = sequenceWordParser
 
-instance Bind 'IntRep 'LiftedRep where
+instance Bind 'IntRep LiftedRep where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
   (>>=) = bindIntParser
   (>>) = sequenceIntParser
 
-instance Bind ('TupleRep '[ 'IntRep, 'IntRep]) 'LiftedRep where
+instance Bind ('TupleRep '[ 'IntRep, 'IntRep]) LiftedRep where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
   (>>=) = bindIntPairParser
@@ -221,7 +221,7 @@ instance Bind ('TupleRep '[ 'IntRep, 'IntRep])
   (>>) = sequenceInt2to5Parser
 
 instance Bind ('TupleRep '[ 'IntRep, 'IntRep, 'IntRep, 'IntRep, 'IntRep]) 
-              'LiftedRep
+              LiftedRep
   where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
@@ -237,13 +237,13 @@ instance Bind 'IntRep
   (>>=) = bindFromIntToInt5
   (>>) = sequenceIntToInt5
 
-instance Bind 'LiftedRep ('TupleRep '[ 'IntRep, 'IntRep]) where
+instance Bind LiftedRep ('TupleRep '[ 'IntRep, 'IntRep]) where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
   (>>=) = bindFromLiftedToIntPair
   (>>) = sequenceLiftedToIntPair
 
-instance Bind 'LiftedRep
+instance Bind LiftedRep
               ('TupleRep '[ 'IntRep, 'IntRep, 'IntRep, 'IntRep, 'IntRep]) 
   where
   {-# inline (>>=) #-}
@@ -257,13 +257,13 @@ instance Bind 'IntRep ('TupleRep '[ 'IntRep, 'IntRep]) where
   (>>=) = bindFromIntToIntPair
   (>>) = sequenceIntToIntPair
 
-instance Bind 'LiftedRep 'IntRep where
+instance Bind LiftedRep 'IntRep where
   {-# inline (>>=) #-}
   {-# inline (>>) #-}
   (>>=) = bindFromLiftedToInt
   (>>) = sequenceLiftedToInt
 
-instance Pure 'LiftedRep where
+instance Pure LiftedRep where
   {-# inline pure #-}
   pure = pureParser
 
@@ -343,7 +343,7 @@ sequenceIntToInt5 (Parser f) (Parser g) = Parser
 
 bindFromLiftedToIntPair ::
      forall s e
-       (a :: TYPE 'LiftedRep)
+       (a :: TYPE LiftedRep)
        (b :: TYPE ('TupleRep '[ 'IntRep, 'IntRep ])).
      Parser s e a
   -> (a -> Parser s e b)
@@ -359,7 +359,7 @@ bindFromLiftedToIntPair (Parser f) g = Parser
 
 sequenceLiftedToIntPair ::
      forall s e
-       (a :: TYPE 'LiftedRep)
+       (a :: TYPE LiftedRep)
        (b :: TYPE ('TupleRep '[ 'IntRep, 'IntRep ])).
      Parser s e a
   -> Parser s e b
@@ -375,7 +375,7 @@ sequenceLiftedToIntPair (Parser f) (Parser g) = Parser
 
 bindFromLiftedToInt5 ::
      forall s e
-       (a :: TYPE 'LiftedRep)
+       (a :: TYPE LiftedRep)
        (b :: TYPE ('TupleRep '[ 'IntRep, 'IntRep, 'IntRep, 'IntRep, 'IntRep])).
      Parser s e a
   -> (a -> Parser s e b)
@@ -391,7 +391,7 @@ bindFromLiftedToInt5 (Parser f) g = Parser
 
 sequenceLiftedToInt5 ::
      forall s e
-       (a :: TYPE 'LiftedRep)
+       (a :: TYPE LiftedRep)
        (b :: TYPE ('TupleRep '[ 'IntRep, 'IntRep, 'IntRep, 'IntRep, 'IntRep ])).
      Parser s e a
   -> Parser s e b
@@ -406,7 +406,7 @@ sequenceLiftedToInt5 (Parser f) (Parser g) = Parser
 
 bindFromLiftedToInt ::
      forall s e
-       (a :: TYPE 'LiftedRep)
+       (a :: TYPE LiftedRep)
        (b :: TYPE 'IntRep).
      Parser s e a
   -> (a -> Parser s e b)
@@ -422,7 +422,7 @@ bindFromLiftedToInt (Parser f) g = Parser
 
 sequenceLiftedToInt ::
      forall s e
-       (a :: TYPE 'LiftedRep)
+       (a :: TYPE LiftedRep)
        (b :: TYPE 'IntRep).
      Parser s e a
   -> Parser s e b
